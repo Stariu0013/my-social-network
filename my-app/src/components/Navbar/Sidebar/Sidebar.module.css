@@ -1,0 +1,15 @@
+.item {
+    color: white;
+    padding-left: 15px;
+}
+
+.image {
+    width: 50px;
+    border-radius: 50px;
+}
+
+.sidebarBlock {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
