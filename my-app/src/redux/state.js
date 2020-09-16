@@ -1,4 +1,5 @@
 const ADD_NEW_MESSAGE = "ADD-NEW-MESSAGE";
+const UPDATE_MESSAGE_BODY = "UPDATE-MESSAGE-BODY";
 const ADD_NEW_POST = "ADD-NEW-POST";
 const UPDATE_NEW_POST_TEXT = "UPDATE-NEW-POST-TEXT";
 
@@ -33,7 +34,8 @@ let store = {
                 {id: 1, message: "Hello"},
                 {id: 2, message: "How is going?"},
                 {id: 3, message: "Yo"},
-            ]
+            ],
+            newMessageBody: ''
         },
         sidebar: {
             friends: [
@@ -81,23 +83,21 @@ let store = {
             };
             this._state.dialogPage.messagesData.push(message);
             this._callSubscriber(this._state);
-        } else {
-            if (action.type === ADD_NEW_POST) {
-                let newPost = {
-                    id: 5,
-                    message: this._state.profilePage.newPostText,
-                    likesCount: 0
-                };
-                this._state.profilePage.postData.push(newPost);
-                this._state.profilePage.newPostText = '';
-                this._callSubscriber(this._state);
-            } else {
-
-                if (action.type === UPDATE_NEW_POST_TEXT) {
-                    this._state.profilePage.newPostText = action.postText;
-                    this._callSubscriber(this._state);
-                }
-            }
+        } else if (action.type === ADD_NEW_POST) {
+            let newPost = {
+                id: 5,
+                message: this._state.profilePage.newPostText,
+                likesCount: 0
+            };
+            this._state.profilePage.postData.push(newPost);
+            this._state.profilePage.newPostText = '';
+            this._callSubscriber(this._state);
+        } else if (action.type === UPDATE_NEW_POST_TEXT) {
+            this._state.profilePage.newPostText = action.postText;
+            this._callSubscriber(this._state);
+        } else if (action.type === UPDATE_MESSAGE_BODY) {
+            this._state.dialogPage.newMessageBody = action.body;
+            this._callSubscriber(this._state);
         }
     }
 };
@@ -109,6 +109,14 @@ export const addNewMessageActionCreator = text => {
         messageText: text
     }
 };
+
+export const updateNewMessageCreator = text => {
+    return {
+        type: "UPDATE-MESSAGE-BODY",
+        postText: text
+    }
+};
+
 
 export const addNewPostActionCreator = () => {
     return {
@@ -122,5 +130,7 @@ export const updateNewPostChangeActionCreator = text => {
         postText: text
     }
 };
+
+
 
 export default store;
