@@ -19,10 +19,10 @@ const App = props => {
                     {/*<Route path='/profile' component={() => { return <Profile postData={props.postData}/> }}/>
                     <Route path='/dialogs' component={() => { return <Dialogs namesData={props.namesData} messagesData={props.messagesData} />}}/>*/}
                     <Route path='/profile' render={() => { return <Profile data={props.state.profilePage}
-                                                                           addPost={props.addPost}
-                                                                           updateNewPostText={props.updateNewPostText}
+                                                                           dispatch={props.dispatch}
                     /> }}/>
-                    <Route path='/dialogs' render={() => { return <Dialogs dialog={props.state.dialogPage} addNewMessage={props.addNewMessage}/>}}/>
+                    <Route path='/dialogs' render={() => { return <Dialogs dialog={props.state.dialogPage}
+                                                                           dispatch={props.dispatch}/>}}/>
                     <Route path='/news' component={News}/>
                     <Route path='/music' component={Music}/>
                     <Route path='/settings' component={Settings}/>

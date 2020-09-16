@@ -1,17 +1,14 @@
 import React from 'react';
-import store from './redux/state'
+import store from './redux/state';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-
 
 export let rerenderEntireTree = state => {
     ReactDOM.render(
         <React.StrictMode>
             <App state={state}
-                 addPost={store.addNewPost.bind(store)}
-                 updateNewPostText={store.updateNewPostText.bind(store)}
-                 addNewMessage={store.addNewMessage.bind(store)}/>
+                 dispatch={store.dispatch.bind(store)}/>
         </React.StrictMode>,
         document.getElementById('root')
     );
