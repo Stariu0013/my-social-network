@@ -4,7 +4,7 @@ import DialogItem from "./DialogItem/DialogItem";
 import Message from "./Message/Message";
 
 const Dialogs = props => {
-
+    console.log(props);
     let messageBody = props.dialogData.newMessageBody;
 
     const dialogNames = props.dialogData.namesData
