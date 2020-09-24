@@ -3,14 +3,7 @@ const UNFOLLOW = "UNFOLLOW";
 const SET_USERS = "SET_USERS";
 
 let initialState = {
-    users: [
-        {id: 1, imgURL: "https://upload.wikimedia.org/wikipedia/commons/8/88/Dmitry_Nagiev_2017_4.jpg",
-            fullName: 'Vlad Starynets', followed: true, status: "I'm da boss", location: { country: "Ukraine", city: 'Kiev'}},
-        {id: 2, imgURL:"https://upload.wikimedia.org/wikipedia/commons/8/88/Dmitry_Nagiev_2017_4.jpg",
-            fullName: 'Yarik Starynets', followed: true, status: "I'm da boss too", location: { country: "Ukraine", city: 'Kiev'}},
-        {id: 3, imgURL: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Dmitry_Nagiev_2017_4.jpg',
-            fullName: 'Nazar Smorzhevsky', followed: false, status: "I'm da boss too", location: { country: "Ukraine", city: 'Kiev'}},
-    ]
+    users: []
 };
 
 const usersReducer = (state = initialState, action) => {
