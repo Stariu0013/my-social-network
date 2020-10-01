@@ -2,14 +2,16 @@ import React from 'react';
 import s from './../Dialogs.module.css'
 import {NavLink} from "react-router-dom";
 
+class DialogItem extends React.Component {
+    path = "/dialogs/" + this.props.id;
 
-const DialogItem = props => {
-    const path = "/dialogs/" + props.id;
-    return(
-        <div className={s.dialog + " " + s.active}>
-            <img className={s.image} src={props.imgSrc} alt=""/>
-            <NavLink to={path}>{props.name}</NavLink></div>
-    )
-};
+    render = () => {
+        return(
+            <div className={s.dialog + " " + s.active}>
+                <img className={s.image} src={this.props.imgSrc} alt=""/>
+                <NavLink to={this.path}>{this.props.name}</NavLink></div>
+        )
+    }
+}
 
 export default DialogItem;

@@ -1,11 +1,13 @@
 import React from 'react';
 
-const Music = () => {
-    return(
-        <div>
-            Music
-        </div>
-    )
+class Music extends React.Component {
+    render = () => {
+        return(
+            <div>
+                Music
+            </div>
+        )
+    }
 }
 
 export default Music;
