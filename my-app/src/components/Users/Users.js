@@ -1,8 +1,6 @@
 import React from 'react';
 import s from './Users.module.css';
 import {NavLink} from "react-router-dom";
-import * as axios from "axios";
-import {userAPI} from "../../api/api";
 
 const Users = props => {
     let {pageSize, usersTotalCount} = props;
@@ -33,21 +31,11 @@ const Users = props => {
                     </div>
                     <div>
                         {user.followed
-                            ? <button onClick={() => {
-                                userAPI.unfollow(user.id)
-                                    .then(response => {
-                                       if(response.resultCode === 0) {
-                                           props.unfollow(user.id)
-                                       }
-                                    });
+                            ? <button disabled={props.followingInProgress.some(id => id === user.id)} onClick={() => {
+                                props.unfollow(user.id)
                             }}>Unfollow</button>
-                            : <button onClick={() => {
-                                userAPI.follow(user.id)
-                                    .then(response => {
-                                        if(response.resultCode === 0) {
-                                            props.follow(user.id)
-                                        }
-                                    });
+                            : <button disabled={props.followingInProgress.some(id => id === user.id)} onClick={() => {
+                                props.follow(user.id);
                             }}>Follow</button>}
                     </div>
                 </span>

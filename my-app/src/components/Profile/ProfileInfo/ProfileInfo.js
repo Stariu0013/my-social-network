@@ -1,6 +1,7 @@
 import React from 'react';
 import s from './ProfileInfo.module.css'
 import Preloader from "../../common/Preloader/Preloader";
+import ProfileStatus from "./ProfileStatus/ProfileStatus";
 
 class ProfileInfo extends React.Component {
 
@@ -19,7 +20,8 @@ class ProfileInfo extends React.Component {
                         <span>{this.props.profile.fullName}</span>
                     </div>
                     <div>
-                        <span>{this.props.profile.aboutMe}</span>
+                        {/*<span>{this.props.profile.aboutMe}</span>*/}
+                        <ProfileStatus status={this.props.status} updateStatus={this.props.updateStatus}/>
                     </div>
                     <div>
                         My GitHub Link - <a href={"https://" + this.props.profile.contacts.github} target="_blank">{this.props.profile.contacts.github}</a>

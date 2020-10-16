@@ -11,6 +11,7 @@ import NavbarContainer from "./components/Navbar/NavbarContainer";
 import UsersContainer from "./components/Users/UsersContainer";
 import ProfileContainer from "./components/Profile/ProfileContainer";
 import HeaderContainer from "./components/Header/HeaderContainer";
+import Login from "./components/Login/Login";
 
 class App extends React.Component {
     constructor(props) {
@@ -30,6 +31,7 @@ class App extends React.Component {
                         <Route path='/profile/:userId?' render={() => { return <ProfileContainer /> }}/>
                         <Route path='/dialogs' render={() => { return <DialogsContainer />}}/>
                         <Route path='/users' render={() => { return <UsersContainer />}}/>
+                        <Route path='/login' render={() => { return <Login />}}/>
                         <Route path='/news' component={News}/>
                         <Route path='/music' component={Music}/>
                         <Route path='/settings' component={Settings}/>

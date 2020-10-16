@@ -1,3 +1,5 @@
+import * as axios from "axios";
+
 const SET_USER_DATA = "SET_USER_DATA";
 
 let initialState = {
@@ -29,6 +31,20 @@ export const setAuthUserData = (id, email, login) => {
             email,
             login
         }
+    }
+};
+
+export const auth = () => {
+    return dispatch => {
+        axios.get(`https://social-network.samuraijs.com/api/1.0/auth/me`, {
+            withCredentials: true,
+        })
+            .then(response => {
+                if(response.data.resultCode === 0) {
+                    let {id, email, login} = response.data.data;
+                    dispatch(setAuthUserData(id,email,login));
+                }
+            })
     }
 };
 

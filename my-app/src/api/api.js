@@ -20,6 +20,21 @@ export const userAPI = {
     unfollow(id) {
         return instance.delete(`follow/${id}`, {},{})
             .then(response => response.data)
+    },
+    getProfile(userId) {
+        console.warn('Obsolete method.Use profileAPI object');
+        return profileAPI.getProfile(userId);
     }
 };
 
+export const profileAPI = {
+    getProfile(userId) {
+        return instance.get('/profile/' + userId);
+    },
+    getUserStatus(status) {
+        return instance.get('profile/status/' + status);
+    },
+    updateUserStatus(status) {
+        return instance.put('profile/status', { status })
+    }
+};
