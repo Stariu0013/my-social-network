@@ -1,4 +1,5 @@
 import * as axios from "axios";
+import {authAPI} from "../api/api";
 
 const SET_USER_DATA = "SET_USER_DATA";
 
@@ -14,8 +15,7 @@ const authReducer = (state = initialState, action) => {
         case SET_USER_DATA: {
             return {
                 ...state,
-                ...action.data,
-                isAuth: true
+                ...action.payload
             }
         }
         default:
@@ -23,30 +23,46 @@ const authReducer = (state = initialState, action) => {
     }
 };
 
-export const setAuthUserData = (id, email, login) => {
+export const setAuthUserData = (id, email, login, isAuth) => {
     return {
         type: SET_USER_DATA,
-        data: {
+        payload: {
             id,
             email,
-            login
+            login,
+            isAuth
         }
     }
 };
 
 export const auth = () => {
     return dispatch => {
-        axios.get(`https://social-network.samuraijs.com/api/1.0/auth/me`, {
-            withCredentials: true,
-        })
+        authAPI.auth()
             .then(response => {
                 if(response.data.resultCode === 0) {
                     let {id, email, login} = response.data.data;
-                    dispatch(setAuthUserData(id,email,login));
+                    dispatch(setAuthUserData(id,email,login, true));
                 }
             })
     }
 };
 
+export const login = (email, password, rememberMe) => dispatch => {
+    authAPI.login(email, password, rememberMe)
+        .then(response => {
+            if(response.data.resultCode === 0) {
+                dispatch(auth());
+            }
+        })
+};
+
+export const logout = () => dispatch => {
+    authAPI.logout()
+        .then(response => {
+            if(response.data.resultCode === 0) {
+                dispatch(setAuthUserData(null, null, null, false));
+            }
+        })
+};
 
 export default authReducer;
