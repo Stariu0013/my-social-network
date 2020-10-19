@@ -1,7 +1,5 @@
 import React from 'react';
 import './App.css';
-import Header from "./components/Header/Header";
-import Profile from "./components/Profile/Profile";
 import {BrowserRouter, Route} from "react-router-dom";
 import Music from "./components/Music/Music";
 import News from "./components/News/News";
@@ -12,22 +10,29 @@ import UsersContainer from "./components/Users/UsersContainer";
 import ProfileContainer from "./components/Profile/ProfileContainer";
 import HeaderContainer from "./components/Header/HeaderContainer";
 import Login from "./components/Login/Login";
+import {connect} from "react-redux";
+import {compose} from "redux";
+import {initializeApp} from "./redux/app-reducer";
+import Preloader from "./components/common/Preloader/Preloader";
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-
+    }
+    componentDidMount() {
+        this.props.initializeApp()
     }
 
     render = () => {
+        if(!this.props.initialized) {
+            return <Preloader />
+        }
         return (
             <BrowserRouter>
                 <div className='app-wrapper'>
                     <HeaderContainer/>
                     <NavbarContainer />
                     <div className="app-wrapper-content">
-                        {/*<Route path='/profile' component={() => { return <Profile postData={props.postData}/> }}/>
-                    <Route path='/dialogs' component={() => { return <Dialogs namesData={props.namesData} messagesData={props.messagesData} />}}/>*/}
                         <Route path='/profile/:userId?' render={() => { return <ProfileContainer /> }}/>
                         <Route path='/dialogs' render={() => { return <DialogsContainer />}}/>
                         <Route path='/users' render={() => { return <UsersContainer />}}/>
@@ -43,4 +48,11 @@ class App extends React.Component {
     }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+      initialized: state.app.initialized
+  }
+};
+
+export default compose(
+    connect(mapStateToProps,{initializeApp}))(App);

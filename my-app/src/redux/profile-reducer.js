@@ -4,6 +4,18 @@ const ADD_NEW_POST = "ADD-NEW-POST";
 const SET_USER_PROFILE = "SET_USER_PROFILE";
 const SET_STATUS = "SET_STATUS";
 
+const generateNewUserId = () => {
+    let prev_ID = 0;
+    let new_ID = 0;
+    initialState.postData.map(elem => {
+        prev_ID = elem.id;
+        if(prev_ID >= new_ID) {
+            new_ID++;
+        }
+    });
+    return new_ID + 1;
+};
+
 let initialState = {
     postData: [
         {id: 1, message: 'Hello, there', likesCount: 15},
@@ -17,7 +29,7 @@ const profileReducer = (state = initialState, action) => {
     switch (action.type) {
         case ADD_NEW_POST: {
             let newPost = {
-                id: 5,
+                id: generateNewUserId,
                 message: action.newPost,
                 likesCount: 0
             };

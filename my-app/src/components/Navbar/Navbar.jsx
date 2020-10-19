@@ -7,7 +7,7 @@ class Navbar extends React.Component {
     constructor(props) {
         super(props);
     }
-    friendList = this.props.friends.map(friend => <Sidebar name={friend.name} imgSrc={friend.imgSrc}/>)
+    friendList = this.props.friends.map(friend => <Sidebar name={friend.name} key={friend.id + "friend_key"} imgSrc={friend.imgSrc}/>)
 
     render = () => {
         return (
