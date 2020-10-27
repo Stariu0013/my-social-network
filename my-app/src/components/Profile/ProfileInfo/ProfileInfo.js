@@ -2,6 +2,7 @@ import React from 'react';
 import s from './ProfileInfo.module.css'
 import Preloader from "../../common/Preloader/Preloader";
 import ProfileStatus from "./ProfileStatus/ProfileStatus";
+import ProfileStatusWithHook from "./ProfileStatus/ProfileStatusWithHook";
 
 const ProfileInfo = props => {
 
@@ -19,7 +20,7 @@ const ProfileInfo = props => {
                         <span>{props.profile.fullName}</span>
                     </div>
                     <div>
-                        <ProfileStatus status={props.status} updateStatus={props.updateStatus}/>
+                        <ProfileStatusWithHook status={props.status} updateStatus={props.updateStatus}/>
                     </div>
                     {props.profile.contacts.github && <div>
                         My GitHub Link - <a href={"https://" + props.profile.contacts.github} target="_blank">{props.profile.contacts.github}</a>
