@@ -10,6 +10,7 @@ const maxLength = fieldMaxLength(15);
 const MyPosts = props => {
     const addNewPost = value => {
         props.addNewPost(value.newPostField);
+        value.newPostField = '';
     };
 
     let postsElem = props.posts
