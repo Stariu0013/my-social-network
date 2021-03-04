@@ -6,15 +6,7 @@ const SET_STATUS = "SET_STATUS";
 const DELETE_POST = "DELETE_POST";
 
 const generateNewUserId = () => {
-    let prev_ID = 0;
-    let new_ID = 0;
-    initialState.postData.map(elem => {
-        prev_ID = elem.id;
-        if(prev_ID >= new_ID) {
-            new_ID++;
-        }
-    });
-    return new_ID + 1;
+    return '_' + Math.random().toString(36).substring(2,9);
 };
 
 let initialState = {
@@ -53,7 +45,7 @@ const profileReducer = (state = initialState, action) => {
             }
         }
         case DELETE_POST: {
-            return {...state, postData: state.postData.filter(post => post.id != action.userId)}
+            return {...state, postData: state.postData.filter(post => post.id !== action.userId)}
         }
         default:
             return state;
