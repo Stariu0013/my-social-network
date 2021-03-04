@@ -1,7 +1,6 @@
 import React from 'react';
 import s from './ProfileInfo.module.css'
 import Preloader from "../../common/Preloader/Preloader";
-import ProfileStatus from "./ProfileStatus/ProfileStatus";
 import ProfileStatusWithHook from "./ProfileStatus/ProfileStatusWithHook";
 
 const ProfileInfo = props => {
@@ -28,8 +27,8 @@ const ProfileInfo = props => {
                     <div>
                         Looking for a job -
                         {props.profile.lookingForAJob
-                            ? <i className="em em---1" aria-role="presentation" aria-label="THUMBS UP SIGN"></i>
-                            : <i className="em em--1" aria-role="presentation" aria-label="THUMBS DOWN SIGN"></i>}
+                            ? <i className="em em---1" aria-role="presentation" aria-label="THUMBS UP SIGN"/>
+                            : <i className="em em--1" aria-role="presentation" aria-label="THUMBS DOWN SIGN"/>}
                     </div>
                     <div>
                         <span>
