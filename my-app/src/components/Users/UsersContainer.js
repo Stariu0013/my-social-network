@@ -19,9 +19,6 @@ import {
 } from "../../selectors/user-selector";
 
 class UsersContainer extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     componentDidMount() {
         this.props.getUsers(this.props.currentPage, this.props.pageSize);
