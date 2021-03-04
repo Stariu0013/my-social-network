@@ -19,9 +19,7 @@ const ProfileContainer = React.lazy(() => import("./components/Profile/ProfileCo
 const DialogsContainer = React.lazy(() => import("./components/Dialogs/DialogsContainer"));
 
 class App extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+
     componentDidMount() {
         this.props.initializeApp()
     }
