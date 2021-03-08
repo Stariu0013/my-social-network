@@ -1,4 +1,11 @@
-let initialState = {
+type TFriends = {
+  id: number,
+  name: string,
+  imgSrc: string,
+}
+let initialState: {
+  friends: TFriends[]
+} = {
   friends: [
     {
       id: 1,
@@ -28,7 +35,7 @@ let initialState = {
   ]
 };
 
-const sidebarReducer = (state = initialState, action) => {
+const sidebarReducer = (state = initialState, action: any) => {
   return state;
 };
 

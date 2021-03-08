@@ -2,15 +2,15 @@ import {auth} from "./auth-reducer";
 
 const INITIALIZED_SUCCESSFULLY = "INITIALIZED_SUCCESSFULLY";
 
-type InitialStateTypes = {
+let initialState: {
     initialized: boolean;
-}
-
-let initialState: InitialStateTypes = {
+} = {
     initialized: false
 };
 
-const appReducer = (state = initialState, action: any): InitialStateTypes => {
+type TInitialState = typeof initialState;
+
+const appReducer = (state = initialState, action: ActionTypes): TInitialState => {
     switch(action.type) {
         case INITIALIZED_SUCCESSFULLY: {
             return {
@@ -23,6 +23,8 @@ const appReducer = (state = initialState, action: any): InitialStateTypes => {
     }
 };
 
+type ActionTypes = InitializedSuccessType;
+
 type InitializedSuccessType = {
     type: typeof INITIALIZED_SUCCESSFULLY;
 }
@@ -33,7 +35,7 @@ export const initialized_successfully = (): InitializedSuccessType => {
     }
 };
 
-export const initializeApp = () => dispatch => {
+export const initializeApp = () => (dispatch: any) => {
     let promise = dispatch(auth());
     promise.then(
         dispatch(initialized_successfully())
