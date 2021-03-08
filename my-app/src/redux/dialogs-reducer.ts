@@ -1,6 +1,20 @@
 const ADD_NEW_MESSAGE = "ADD-NEW-MESSAGE";
 
-let initialState = {
+type NamesTypes = {
+    id: number
+    name: string
+    imgSrc: string
+}
+
+type MessagesType = {
+    id: number
+    message: string
+}
+
+let initialState : {
+    namesData: NamesTypes[],
+    messagesData: MessagesType[],
+} = {
     namesData: [
         {
             id: 1,
@@ -22,10 +36,12 @@ let initialState = {
         {id: 1, message: "Hello"},
         {id: 2, message: "How is going?"},
         {id: 3, message: "Yo"},
-    ]
+    ],
 };
 
-const dialogReducer = (state = initialState, action) => {
+type InitialStateType = typeof initialState;
+
+const dialogReducer = (state = initialState, action: ActionTypes): InitialStateType => {
     switch(action.type) {
         case ADD_NEW_MESSAGE: {
             let message = {
@@ -34,7 +50,6 @@ const dialogReducer = (state = initialState, action) => {
             };
             return  {
                 ...state,
-                newMessageBody: '',
                 messagesData: [...state.messagesData, message]
             };
         }
@@ -43,7 +58,14 @@ const dialogReducer = (state = initialState, action) => {
     }
 };
 
-export const addNewMessageActionCreator = text => {
+type ActionTypes = AddNewMessageType;
+
+type AddNewMessageType = {
+    type: typeof ADD_NEW_MESSAGE
+    messageText: string
+}
+
+export const addNewMessageActionCreator = (text: string): AddNewMessageType => {
     return {
         type: ADD_NEW_MESSAGE,
         messageText: text
