@@ -1,4 +1,4 @@
-import {authAPI, securityAPI} from "../api/api";
+import {authAPI, ECodes, ECaptcha, securityAPI} from "../api/api";
 import {stopSubmit} from "redux-form";
 
 const SET_USER_DATA = "SET_USER_DATA";
@@ -71,42 +71,41 @@ export const setCaptchaUrl = (captchaUrl: string): StyCaptchaUrlType => {
 
 export const auth = () =>
     async (dispatch: any) => {
-        let response = await authAPI.auth()
+        let AuthData = await authAPI.auth();
 
-        if (response.data.resultCode === 0) {
-            let {id, email, login} = response.data.data;
+        if (AuthData.resultCode === ECodes.SUCCESS) {
+            let {id, email, login} = AuthData.data;
             dispatch(setAuthUserData(id, email, login, true));
         }
 
     };
 
 export const login = (email: string, password: string, rememberMe: boolean, captcha: string) => async (dispatch: any) => {
-    let response = await authAPI.login(email, password, rememberMe, captcha);
+    let LoginData = await authAPI.login(email, password, rememberMe, captcha);
 
-    if (response.data.resultCode === 0) {
+    if (LoginData.resultCode === ECodes.SUCCESS) {
         dispatch(auth());
     } else {
 
-        if(response.data.resultCode === 10) {
+        if(LoginData.resultCode === ECaptcha.CAPTCHA_IS_REQUIRED) {
             dispatch(getCaptchaUrl());
         }
 
-        let message = response.data.messages.length > 0 ? response.data.messages[0] : "Some error";
+        let message = LoginData.messages.length > 0 ? LoginData.messages[0] : "Some error";
         dispatch(stopSubmit('login', {_error: message}));
     }
 };
 
 export const getCaptchaUrl = () => async (dispatch: any) => {
-    let response = await securityAPI.requestCaptchaUrl();
+    let CaptchaData = await securityAPI.requestCaptchaUrl();
 
-    console.log(response);
-    dispatch(setCaptchaUrl(response.data.url));
+    dispatch(setCaptchaUrl(CaptchaData.url));
 };
 
 export const logout = () => async (dispatch: any) => {
-    let response = await authAPI.logout();
+    let LogoutData = await authAPI.logout();
 
-    if (response.data.resultCode === 0) {
+    if (LogoutData.resultCode === 0) {
         dispatch(setAuthUserData(null, null, null, false));
     }
 

@@ -1,5 +1,7 @@
-import {profileAPI, userAPI} from "../api/api";
+import {ECodes, profileAPI, userAPI} from "../api/api";
 import {TProfile} from "../types/types";
+import {ThunkAction} from "redux-thunk";
+import {TAppState} from "./redux-store";
 
 const ADD_NEW_POST = "ADD-NEW-POST";
 const SET_USER_PROFILE = "SET_USER_PROFILE";
@@ -34,7 +36,7 @@ const initialState: {
 
 type TInitialState = typeof initialState;
 
-const profileReducer = (state = initialState, action: ActionTypes): TInitialState => {
+const profileReducer = (state = initialState, action: TActions): TInitialState => {
     switch (action.type) {
         case ADD_NEW_POST: {
             let newPost: TPostData = {
@@ -67,7 +69,7 @@ const profileReducer = (state = initialState, action: ActionTypes): TInitialStat
     }
 };
 
-type ActionTypes = AddNewPostType | DeletePostType | SetStatusType | SetUserProfile;
+type TActions = AddNewPostType | DeletePostType | SetStatusType | SetUserProfile;
 
 type AddNewPostType = {
     type: typeof ADD_NEW_POST
@@ -111,27 +113,29 @@ export const setUserProfile = (profile: TProfile): SetUserProfile => {
     }
 };
 
-export const userProfileById = (userId: number) => {
-    return (dispatch: any) => {
+type TDispatch = ThunkAction<Promise<void>, TAppState, unknown, TActions>;
+
+export const userProfileById = (userId: number): TDispatch => {
+    return async (dispatch) => {
         userAPI.getProfile(userId)
             .then((response: any) =>
                 dispatch(setUserProfile(response.data)
                 ));
     }
 };
-export const getStatus = (userId: number) => {
-    return (dispatch: any) => {
+export const getStatus = (userId: number): TDispatch => {
+    return async (dispatch) => {
         profileAPI.getUserStatus(userId)
             .then((response: any) =>
                 dispatch(setStatus(response.data)
                 ));
     }
 };
-export const updateStatus = (status: string) => {
-    return (dispatch: any) => {
+export const updateStatus = (status: string): TDispatch => {
+    return async (dispatch) => {
         profileAPI.updateUserStatus(status)
             .then((response: any) => {
-                    if(response.data.resultCode === 0) {
+                    if(response.resultCode === ECodes.SUCCESS) {
                         dispatch(setStatus(status))
                     }
                 }
