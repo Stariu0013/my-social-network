@@ -1,4 +1,4 @@
-type ContactsType = {
+type TContacts = {
     github: string | null
     vk: string | null
     facebook: string | null
@@ -8,7 +8,7 @@ type ContactsType = {
     youtube: string | null
     mainLink: string | null
 };
-export type PhotoType = {
+export type TPhotoes = {
     large: string | null
     small: string | null
 };
@@ -17,13 +17,13 @@ export type TProfile = {
     lookingForAJob: boolean
     lookingForAJobDescription: string
     fullName: string
-    contacts: ContactsType
-    photos: PhotoType
+    contacts: TContacts
+    photos: TPhotoes
 };
-export type UserType = {
+export type TUser = {
     id: number,
     name: string,
     status: string,
-    photos: PhotoType,
+    photos: TPhotoes,
     followed: boolean,
 }
