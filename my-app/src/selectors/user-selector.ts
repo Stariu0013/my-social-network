@@ -1,12 +1,12 @@
 import {createSelector} from "reselect";
 import {TAppState} from "../redux/redux-store";
-import {UserType} from "../types/types";
+import {TUser} from "../types/types";
 
 const getUsersSelector = (state: TAppState) => {
     return state.usersPage.users;
 };
 
-export const getUsers = createSelector(getUsersSelector, (users: UserType[]) => {
+export const getUsers = createSelector(getUsersSelector, (users: TUser[]) => {
     return users.filter(u => true);
 });
 
