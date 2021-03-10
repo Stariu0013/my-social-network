@@ -15,14 +15,14 @@ import {
     getUsersTotalCount,
 } from "../../selectors/user-selector";
 import {TAppState} from "../../redux/redux-store";
-import {UserType} from "../../types/types";
+import {TUser} from "../../types/types";
 
 type TMapStateProps = {
     currentPage: number,
     pageSize: number,
     isFetching: boolean,
     totalItemsCount: number,
-    users: UserType[],
+    users: TUser[],
     followingInProgress: number[],
 }
 

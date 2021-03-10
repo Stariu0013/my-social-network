@@ -1,17 +1,17 @@
 import React from 'react';
 import s from './Users.module.css';
 import {NavLink} from "react-router-dom";
-import {UserType} from "../../types/types";
+import {TUser} from "../../types/types";
 
-type TUser = {
-    user: UserType,
+type TUserProps = {
+    user: TUser,
     followingInProgress: number[],
 
     unfollow: (id: number) => void,
     follow: (id: number) => void,
 }
 
-const User: React.FC<TUser> = ({user, followingInProgress, unfollow, follow}) => {
+const User: React.FC<TUserProps> = ({user, followingInProgress, unfollow, follow}) => {
     return <div>
             <span>
                 <div>

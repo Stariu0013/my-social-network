@@ -1,6 +1,6 @@
 import {ECodes, userAPI} from "../api/api";
 import {updateObjectInArray} from "../utils/helpers/object-helpers";
-import {UserType} from "../types/types";
+import {TUser} from "../types/types";
 import {Dispatch} from "redux";
 import {ThunkAction} from "redux-thunk";
 import {TAppState} from "./redux-store";
@@ -14,7 +14,7 @@ const TOGGLE_IS_FETCHING = "TOGGLE_IS_FETCHING";
 const TOGGLE_FOLLOWING_PROGRESS = "TOGGLE_FOLLOWING_PROGRESS";
 
 let initialState: {
-    users: UserType[],
+    users: TUser[],
     pageSize: number,
     usersTotalCount: number,
     currentPage: number,
@@ -96,9 +96,9 @@ export const unfollowSuccess = (userId: number): TUnfollowSuccess => {
 };
 type TSetUsers = {
     type: typeof SET_USERS,
-    users: UserType[],
+    users: TUser[],
 }
-export const setUsers = (users: UserType[]): TSetUsers => {
+export const setUsers = (users: TUser[]): TSetUsers => {
     return {
         type: SET_USERS,
         users

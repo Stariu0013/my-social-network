@@ -1,5 +1,5 @@
 import axios from "axios";
-import {TProfile, UserType} from "../types/types";
+import {TProfile, TUser} from "../types/types";
 
 const instance = axios.create({
     withCredentials: true,
@@ -10,7 +10,7 @@ const instance = axios.create({
 });
 
 type TGetUsers = {
-    items: UserType[],
+    items: TUser[],
     totalCount: number,
     error: string,
 }
@@ -27,7 +27,7 @@ export const userAPI = {
             .then(response => response.data);
     },
     follow(id: number) {
-        return instance.post<TFollowUnfollow>(`follow/${id}`, {},{})
+        return instance.post<TFollowUnfollow>(`follow/${id}`, {}, {})
             .then(response => response.data)
     },
     unfollow(id: number) {
@@ -54,8 +54,18 @@ export const profileAPI = {
         return instance.get('profile/status/' + userId);
     },
     updateUserStatus(status: string) {
-        return instance.put<TUpdateStatus>('profile/status', { status })
+        return instance.put<TUpdateStatus>('profile/status', {status})
             .then(res => res.data);
+    },
+    savePhoto(photoFile: any) {
+        const formData = new FormData();
+        formData.append('image', photoFile);
+
+        return instance.put('profile/photo', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
     },
 };
 
@@ -63,6 +73,7 @@ export enum ECodes {
     SUCCESS = 0,
     ERROR = 1,
 }
+
 export enum ECaptcha {
     CAPTCHA_IS_REQUIRED = 10,
 }
@@ -78,7 +89,7 @@ type TAuth = {
 }
 type TLogin = {
     data: {
-       userId: number,
+        userId: number,
     },
     resultCode: ECodes | ECaptcha,
     messages: string[],
@@ -95,7 +106,7 @@ export const authAPI = {
             .then(res => res.data);
     },
     login(email: string, password: string, rememberMe = false, captcha = "") {
-        return instance.post<TLogin>('auth/login', { email, password, rememberMe, captcha})
+        return instance.post<TLogin>('auth/login', {email, password, rememberMe, captcha})
             .then(res => res.data);
     },
     logout() {
