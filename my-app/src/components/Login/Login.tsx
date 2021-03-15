@@ -1,21 +1,28 @@
 import React from 'react';
-import {reduxForm} from "redux-form";
+import {InjectedFormProps, reduxForm} from "redux-form";
 import {createField, Input} from "../common/FormControls/FormControls";
 import {requiredField} from "../../utils/validators/validator";
 import {connect} from "react-redux";
 import {login} from "../../redux/auth-reducer";
 import {Redirect} from "react-router-dom";
 import style from './../common/FormControls/FormControls.module.css'
+import {TAppState} from "../../redux/redux-store";
 
-const LoginForm = ({handleSubmit, error, captchaUrl}) => {
+type TLoginFormProps = {
+    captchaUrl: string | null,
+}
+
+type TFormDataKeys = Extract<keyof TFormData, string>
+
+const LoginForm: React.FC<InjectedFormProps<TFormData, TLoginFormProps> &  TLoginFormProps> = ({handleSubmit, error, captchaUrl}) => {
   return (
       <form onSubmit={handleSubmit}>
-          {createField("text", "login", [requiredField], "Login", Input)}
-          {createField("password", "password", [requiredField], "Password", Input)}
-          {createField(null, "rememberMe", null, "Password", Input,{type: "checkbox"},"Remember me")}
+          {createField<TFormDataKeys>("text", "login", [requiredField], "Login", Input)}
+          {createField<TFormDataKeys>("password", "password", [requiredField], "Password", Input)}
+          {createField<TFormDataKeys>(void 0, "rememberMe", void 0, "Password", Input,{type: "checkbox"},"Remember me")}
 
           {captchaUrl && <img src={captchaUrl} alt="captcha"/>}
-          {captchaUrl && createField("text", "captcha", [requiredField], "Symbols from image", Input)}
+          {captchaUrl && createField<TFormDataKeys>("text", "captcha", [requiredField], "Symbols from image", Input)}
 
           {error && <div className={style.summuryError}>{error}</div>}
           <div><button>Log in</button></div>
@@ -23,12 +30,19 @@ const LoginForm = ({handleSubmit, error, captchaUrl}) => {
   )
 };
 
-const LoginReduxForm = reduxForm({
-    form: 'login'
+const LoginReduxForm = reduxForm<TFormData, TLoginFormProps>({
+    form: 'login',
 })(LoginForm);
 
-const Login = props => {
-    const onSubmit = formData => {
+type TFormData = {
+    login: string,
+    password: string,
+    rememberMe: boolean,
+    captcha: string,
+}
+
+const Login: React.FC<TMapStateProps & TMapDispatchProps> = props => {
+    const onSubmit = (formData: TFormData) => {
         let { login, password, rememberMe, captcha} = formData;
         props.login(login, password, rememberMe, captcha);
     };
@@ -43,9 +57,17 @@ const Login = props => {
     </div>
 };
 
-const mapStateToProps = state => ({
+type TMapStateProps = {
+    captcha: string | null,
+    isAuth: boolean,
+}
+type TMapDispatchProps = {
+    login: (login: string, password: string, rememberMe: boolean, captcha: string) => void
+}
+
+const mapStateToProps = (state: TAppState): TMapStateProps => ({
     captcha: state.auth.captchaUrl,
-    isAuth: state.auth.isAuth
+    isAuth: state.auth.isAuth,
 });
 
 export default connect(mapStateToProps, {login})(Login);
