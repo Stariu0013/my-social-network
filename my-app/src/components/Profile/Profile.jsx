@@ -1,7 +1,6 @@
 import React from 'react';
 import ProfileInfo from "./ProfileInfo/ProfileInfo";
 import MyPostsContainer from "./MyPosts/MyPostsContainer";
-import {updateProfile} from "../../redux/profile-reducer";
 
 class Profile extends React.Component {
 
