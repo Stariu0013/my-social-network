@@ -14,7 +14,7 @@ const MyPosts = props => {
     };
 
     let postsElem = props.posts
-        .map(post => <Post message={post.message} likeCount={post.likesCount}/>);
+        .map(post => <Post key={post.id} message={post.message} likeCount={post.likesCount}/>);
 
     return <div className={s.posts}>
         <h4>My posts</h4>

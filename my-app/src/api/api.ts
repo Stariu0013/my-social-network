@@ -1,13 +1,22 @@
 import axios from "axios";
-import {TProfile, TUser} from "../types/types";
+import {TPhotos, TProfile, TUser} from "../types/types";
 
 const instance = axios.create({
     withCredentials: true,
     baseURL: "https://social-network.samuraijs.com/api/1.0/",
     headers: {
-        'API-KEY': "8c9ba98e-b3c1-4f12-bbc3-ef13dd1018cc"
+        'API-KEY': "4c45f27f-22a4-45d3-84cb-87edd355a095"
     },
 });
+
+export enum ECodes {
+    SUCCESS = 0,
+    ERROR = 1,
+}
+
+export enum ECaptcha {
+    CAPTCHA_IS_REQUIRED = 10,
+}
 
 type TGetUsers = {
     items: TUser[],
@@ -45,6 +54,19 @@ type TUpdateStatus = {
     resultCode: ECodes,
     messages: string[],
 }
+export type TSavePhotos = {
+    data: {
+        photos: TPhotos,
+    },
+    resultCode: ECodes,
+    messages: string[],
+}
+
+type TSaveProfile = {
+    data: {},
+    messages: string[],
+    resultCode: ECodes,
+}
 
 export const profileAPI = {
     getProfile(userId: number) {
@@ -57,26 +79,22 @@ export const profileAPI = {
         return instance.put<TUpdateStatus>('profile/status', {status})
             .then(res => res.data);
     },
-    savePhoto(photoFile: any) {
+    savePhoto(photoFile: File) {
         const formData = new FormData();
         formData.append('image', photoFile);
 
-        return instance.put('profile/photo', formData, {
+        return instance.put<TSavePhotos>('profile/photo', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
+            .then(res => res.data);
+    },
+    saveProfile(profile: TProfile) {
+        return instance.put<TSaveProfile>('/profile', profile)
+            .then(res => res.data);
     },
 };
-
-export enum ECodes {
-    SUCCESS = 0,
-    ERROR = 1,
-}
-
-export enum ECaptcha {
-    CAPTCHA_IS_REQUIRED = 10,
-}
 
 type TAuth = {
     data: {
