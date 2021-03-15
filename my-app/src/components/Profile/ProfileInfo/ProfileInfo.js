@@ -5,7 +5,7 @@ import ProfileStatusWithHook from "./ProfileStatus/ProfileStatusWithHook";
 import DefaultImg from '../../../assets/images/defaultImg.jpg';
 import ProfileDataReduxForm from "./ProfileDataForm";
 
-const ProfileInfo = props => {
+const ProfileInfo = props => {``
 
   const [editMode, setEditMode] = useState(false);
   const {
