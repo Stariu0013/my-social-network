@@ -1,15 +1,8 @@
-import {ECodes, profileAPI, TSavePhotos, userAPI} from "../api/api";
-import {TPhotos, TProfile} from "../types/types";
-import {ThunkAction} from "redux-thunk";
-import {TAppState} from "./redux-store";
-import {stopSubmit} from "redux-form";
-
-const ADD_NEW_POST = "ADD-NEW-POST";
-const SET_USER_PROFILE = "SET_USER_PROFILE";
-const SET_STATUS = "SET_STATUS";
-const DELETE_POST = "DELETE_POST";
-const UPDATE_PHOTOS_SUCCESS = "UPDATE_PHOTOS_SUCCESS";
-const UPDATE_PROFILE_SUCCESS = "UPDATE_PROFILE_SUCCESS";
+import { APIResponse, ECodes } from "../api/api";
+import { TPhotos, TProfile } from "../types/types";
+import { CommonDispatch, InferActionsType } from "./redux-store";
+import {FormAction, stopSubmit} from "redux-form";
+import { profileAPI, TSavePhotos } from "../api/profile-api";
 
 let counter = 0;
 const idPrefix = '_' + Math.floor(Math.random() * 9e9).toString(36);
@@ -36,12 +29,36 @@ const initialState: {
     profile: null,
     status: '',
 };
+export const actions = {
+    addNewPostActionCreator: (newPost: string) => ({
+        type: 'ADD_NEW_POST',
+        newPost,
+    } as const),
+    deletePost: (postId: string) => ({
+        type: 'DELETE_POST',
+        postId,
+    } as const),
+    setStatus: (status: string) => ({
+        type: 'SET_STATUS',
+        status,
+    } as const),
+    setUserProfile: (profile: TProfile) => ({
+        type: 'SET_USER_PROFILE',
+        profile,
+    } as const),
+    updatePhotos: (photos: TPhotos) => ({
+        type: 'UPDATE_PHOTOS_SUCCESS',
+        photos,
+    } as const),
+}
 
+type TActions = InferActionsType<typeof actions>;
 type TInitialState = typeof initialState;
+type TDispatch = CommonDispatch<TActions | FormAction>;s
 
 const profileReducer = (state = initialState, action: TActions): TInitialState => {
     switch (action.type) {
-        case ADD_NEW_POST: {
+        case 'ADD_NEW_POST': {
             let newPost: TPostData = {
                 id: generateNewUserId(),
                 message: action.newPost,
@@ -52,22 +69,22 @@ const profileReducer = (state = initialState, action: TActions): TInitialState =
                 postData: [...state.postData, newPost],
             };
         }
-        case SET_USER_PROFILE: {
+        case 'SET_USER_PROFILE': {
             return {
                 ...state,
                 profile: action.profile,
             }
         }
-        case SET_STATUS: {
+        case 'SET_STATUS': {
             return {
                 ...state,
                 status: action.status,
             }
         }
-        case DELETE_POST: {
+        case 'DELETE_POST': {
             return {...state, postData: state.postData.filter(post => post.id !== action.postId)}
         }
-        case UPDATE_PHOTOS_SUCCESS: {
+        case 'UPDATE_PHOTOS_SUCCESS': {
             let newProfileState = state.profile;
 
             if (newProfileState) {
@@ -90,76 +107,11 @@ const profileReducer = (state = initialState, action: TActions): TInitialState =
     }
 };
 
-type TActions = AddNewPostType | DeletePostType | SetStatusType | SetUserProfile | TUpdatePhotos;
-
-type AddNewPostType = {
-    type: typeof ADD_NEW_POST
-    newPost: string
-}
-export const addNewPostActionCreator = (newPost: string): AddNewPostType => {
-    return {
-        type: ADD_NEW_POST,
-        newPost
-    }
-};
-type DeletePostType = {
-    type: typeof DELETE_POST
-    postId: string
-}
-export const deletePost = (postId: string): DeletePostType => {
-    return {
-        type: DELETE_POST,
-        postId
-    }
-};
-type SetStatusType = {
-    type: typeof SET_STATUS
-    status: string
-}
-export const setStatus = (status: string): SetStatusType => {
-    return {
-        type: SET_STATUS,
-        status
-    }
-};
-type SetUserProfile = {
-    type: typeof SET_USER_PROFILE
-    profile: TProfile
-}
-export const setUserProfile = (profile: TProfile): SetUserProfile => {
-    return {
-        type: SET_USER_PROFILE,
-        profile
-    }
-};
-type TUpdatePhotos = {
-    type: typeof UPDATE_PHOTOS_SUCCESS,
-    photos: TPhotos,
-}
-export const updatePhotos = (photos: TPhotos): TUpdatePhotos => {
-    return {
-        type: UPDATE_PHOTOS_SUCCESS,
-        photos,
-    }
-};
-type TUpdateProfile = {
-    type: typeof UPDATE_PROFILE_SUCCESS,
-    profile: TProfile,
-}
-export const updateProfileSuccess = (profile: TProfile): TUpdateProfile => {
-    return {
-        type: UPDATE_PROFILE_SUCCESS,
-        profile,
-    }
-};
-
-type TDispatch = ThunkAction<Promise<void>, TAppState, unknown, TActions>;
-
 export const userProfileById = (userId: number): TDispatch => {
     return async (dispatch) => {
-        userAPI.getProfile(userId)
-            .then(function (response: any) {
-                    dispatch(setUserProfile(response.data))
+        profileAPI.getProfile(userId)
+            .then(function (userProfileData: TProfile) {
+                    dispatch(actions.setUserProfile(userProfileData))
                 }
             );
     }
@@ -167,45 +119,45 @@ export const userProfileById = (userId: number): TDispatch => {
 
 export const savePhotos = (file: File): TDispatch => {
     return async (dispatch) => {
-        let response: TSavePhotos = await profileAPI.savePhoto(file);
+        let photoData: APIResponse<TSavePhotos> = await profileAPI.savePhoto(file);
 
-        if (response.resultCode === ECodes.SUCCESS) {
-            dispatch(updatePhotos(response.data.photos))
+        if (photoData.resultCode === ECodes.SUCCESS) {
+            dispatch(actions.updatePhotos(photoData.data.photos))
         }
     }
 };
 export const getStatus = (userId: number): TDispatch => {
     return async (dispatch) => {
         profileAPI.getUserStatus(userId)
-            .then(function (response: any) {
-                dispatch(setStatus(response.data))
+            .then(function (statusData: string) {
+                dispatch(actions.setStatus(statusData))
             });
     }
 };
 export const updateStatus = (status: string): TDispatch => {
     return async (dispatch) => {
-        let response = await profileAPI.updateUserStatus(status);
+        let updateProfileData = await profileAPI.updateUserStatus(status);
 
-        if (response.resultCode === ECodes.SUCCESS) {
-            dispatch(setStatus(status))
+        if (updateProfileData.resultCode === ECodes.SUCCESS) {
+            dispatch(actions.setStatus(status))
         }
     }
 };
 export const updateProfile = (profile: TProfile): TDispatch => {
     return async (dispatch, getState) => {
-        const response = await profileAPI.saveProfile(profile);
+        const saveProfileData = await profileAPI.saveProfile(profile);
         const userId = getState().auth.id;
 
-        if (response.resultCode === ECodes.SUCCESS) {
+        if (saveProfileData.resultCode === ECodes.SUCCESS) {
             if(userId) {
-                dispatch(userProfileById(userId));
+                await dispatch(userProfileById(userId));
             }
         }
         else {
             // todo: Не работает всплывашка об ошибке
             // @ts-ignore
-            dispatch(stopSubmit('profileData',{_error: response.messages[0] }));
-            return Promise.reject(response.messages[0]);
+            dispatch(stopSubmit('profileData',{_error: saveProfileData.messages[0] }));
+            return Promise.reject(saveProfileData.messages[0]);
         }
     }
 };

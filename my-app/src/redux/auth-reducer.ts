@@ -1,8 +1,8 @@
-import {authAPI, ECodes, ECaptcha, securityAPI} from "../api/api";
-import {stopSubmit} from "redux-form";
-
-const SET_USER_DATA = "SET_USER_DATA";
-const GET_CAPTCHA_URL_SUCCESS = "GET_CAPTCHA_URL_SUCCESS";
+import {ECodes, ECaptcha} from "../api/api";
+import {FormAction, stopSubmit} from "redux-form";
+import {authAPI} from "../api/auth-api";
+import {securityAPI} from "../api/security-api";
+import {CommonDispatch, InferActionsType} from "./redux-store";
 
 let initialState: {
     id: number | null,
@@ -17,13 +17,30 @@ let initialState: {
     isAuth: false,
     captchaUrl: null,
 };
+const actions = {
+    setAuthUserData: (id: number | null, email: string | null, login: string | null, isAuth: boolean) => ({
+        type: 'SET_USER_DATA',
+        payload: {
+            id,
+            email,
+            login,
+            isAuth
+        }
+    } as const),
+    setCaptchaUrl: (captchaUrl: string) => ({
+        type: 'GET_CAPTCHA_URL_SUCCESS',
+        payload: { captchaUrl }
+    } as const),
+};
 
 type InitialState = typeof initialState;
+type ActionTypes = InferActionsType<typeof actions>;
+type TDispatch = CommonDispatch<ActionTypes | FormAction>;
 
 const authReducer = (state = initialState, action: ActionTypes): InitialState => {
     switch (action.type) {
-        case SET_USER_DATA:
-        case GET_CAPTCHA_URL_SUCCESS: {
+        case 'SET_USER_DATA':
+        case 'GET_CAPTCHA_URL_SUCCESS': {
             return {
                 ...state,
                 ...action.payload
@@ -34,79 +51,44 @@ const authReducer = (state = initialState, action: ActionTypes): InitialState =>
     }
 };
 
-type ActionTypes = SetAuthUserDataType | StyCaptchaUrlType ;
+export const auth = (): TDispatch =>
+    async (dispatch) => {
+        let authData = await authAPI.auth();
 
-type SetAuthUserDataPayloadType = {
-    id: number | null
-    email: string | null
-    login: string | null
-    isAuth: boolean
-}
-type SetAuthUserDataType = {
-    type: typeof SET_USER_DATA,
-    payload: SetAuthUserDataPayloadType
-}
-export const setAuthUserData = (id: number | null, email: string | null, login: string | null, isAuth: boolean): SetAuthUserDataType => {
-    return {
-        type: SET_USER_DATA,
-        payload: {
-            id,
-            email,
-            login,
-            isAuth
-        }
-    }
-};
-
-type StyCaptchaUrlType = {
-    type: typeof GET_CAPTCHA_URL_SUCCESS
-    payload: { captchaUrl: string}
-}
-export const setCaptchaUrl = (captchaUrl: string): StyCaptchaUrlType => {
-    return  {
-        type: GET_CAPTCHA_URL_SUCCESS,
-        payload: { captchaUrl }
-    }
-};
-
-export const auth = () =>
-    async (dispatch: any) => {
-        let AuthData = await authAPI.auth();
-
-        if (AuthData.resultCode === ECodes.SUCCESS) {
-            let {id, email, login} = AuthData.data;
-            dispatch(setAuthUserData(id, email, login, true));
+        if (authData.resultCode === ECodes.SUCCESS) {
+            let {id, email, login} = authData.data;
+            dispatch(actions.setAuthUserData(id, email, login, true));
         }
 
     };
 
-export const login = (email: string, password: string, rememberMe: boolean, captcha: string) => async (dispatch: any) => {
-    let LoginData = await authAPI.login(email, password, rememberMe, captcha);
+export const login = (email: string, password: string, rememberMe: boolean, captcha: string): TDispatch => async (dispatch) => {
+    let loginData = await authAPI.login(email, password, rememberMe, captcha);
 
-    if (LoginData.resultCode === ECodes.SUCCESS) {
+    if (loginData.resultCode === ECodes.SUCCESS) {
         dispatch(auth());
     } else {
 
-        if(LoginData.resultCode === ECaptcha.CAPTCHA_IS_REQUIRED) {
+        if(loginData.resultCode === ECaptcha.CAPTCHA_IS_REQUIRED) {
             dispatch(getCaptchaUrl());
         }
 
-        let message = LoginData.messages.length > 0 ? LoginData.messages[0] : "Some error";
+        let message = loginData.messages.length > 0 ? loginData.messages[0] : "Some error";
         dispatch(stopSubmit('login', {_error: message}));
     }
 };
 
-export const getCaptchaUrl = () => async (dispatch: any) => {
-    let CaptchaData = await securityAPI.requestCaptchaUrl();
+export const getCaptchaUrl = (): TDispatch => async (dispatch) => {
+    let captchaData = await securityAPI.requestCaptchaUrl();
 
-    dispatch(setCaptchaUrl(CaptchaData.url));
+    dispatch(actions.setCaptchaUrl(captchaData.url));
 };
 
-export const logout = () => async (dispatch: any) => {
-    let LogoutData = await authAPI.logout();
+export const logout = (): TDispatch => async (dispatch) => {
+    let logoutData = await authAPI.logout();
 
-    if (LogoutData.resultCode === 0) {
-        dispatch(setAuthUserData(null, null, null, false));
+    if (logoutData.resultCode === 0) {
+        dispatch(actions.setAuthUserData(null, null, null, false));
     }
 
 };

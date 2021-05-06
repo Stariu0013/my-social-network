@@ -1,9 +1,9 @@
-import {ECodes, userAPI} from "../api/api";
-import {updateObjectInArray} from "../utils/helpers/object-helpers";
-import {TUser} from "../types/types";
-import {Dispatch} from "redux";
-import {ThunkAction} from "redux-thunk";
-import {InferActionsType, TAppState} from "./redux-store";
+import { ECodes } from "../api/api";
+import { updateObjectInArray } from "../utils/helpers/object-helpers";
+import { TUser } from "../types/types";
+import { Dispatch } from "redux";
+import { CommonDispatch, InferActionsType } from "./redux-store";
+import { userAPI } from "../api/users-api";
 
 let initialState: {
     users: TUser[],
@@ -65,16 +65,16 @@ const usersReducer = (state = initialState, action: TActions): TInitialState => 
 type TActions = InferActionsType<typeof actions>;
 
 export const actions = {
-    followSuccess: (userId: number) => ({type: 'FOLLOW', userId,} as const),
-    unfollowSuccess: (userId: number) => ({type: 'UNFOLLOW', userId,} as const),
-    setUsers: (users: TUser[]) => ({type: 'SET_USERS', users,} as const),
-    setCurrentPage: (currentPage: number) => ({type: 'SET_CURRENT_PAGE', currentPage,} as const),
-    setTotalUsersCount: (count: number) => ({type: 'SET_TOTAL_USERS_COUNT', count,} as const),
-    toggleIsFetching: (isFetching: boolean) => ({type: 'TOGGLE_IS_FETCHING', isFetching,} as const),
-    toggleFollowingProgress: (isFetching: boolean, userId: number) => ({type: 'TOGGLE_FOLLOWING_PROGRESS', isFetching, userId,} as const),
+    followSuccess: (userId: number) => ({type: 'FOLLOW', userId} as const),
+    unfollowSuccess: (userId: number) => ({type: 'UNFOLLOW', userId} as const),
+    setUsers: (users: TUser[]) => ({type: 'SET_USERS', users} as const),
+    setCurrentPage: (currentPage: number) => ({type: 'SET_CURRENT_PAGE', currentPage} as const),
+    setTotalUsersCount: (count: number) => ({type: 'SET_TOTAL_USERS_COUNT', count} as const),
+    toggleIsFetching: (isFetching: boolean) => ({type: 'TOGGLE_IS_FETCHING', isFetching} as const),
+    toggleFollowingProgress: (isFetching: boolean, userId: number) => ({type: 'TOGGLE_FOLLOWING_PROGRESS', isFetching, userId} as const),
 };
 
-type TDispatch = ThunkAction<Promise<void>, TAppState, unknown, TActions>;
+type TDispatch = CommonDispatch<TActions>;
 
 export const requestUsers = (currentPage: number, pageSize: number): TDispatch => {
     return async (dispatch) => {
