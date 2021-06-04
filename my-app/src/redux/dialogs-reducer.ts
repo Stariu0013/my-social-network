@@ -9,7 +9,7 @@ type MessagesType = {
     id: string,
     message: string,
 };
-type InitialStateType = typeof initialState;
+export type TDialogsInitialState = typeof initialState;
 type ActionTypes = InferActionsType<typeof actions>;
 
 // counter for generating users id;
@@ -48,13 +48,13 @@ let initialState : {
     ],
 };
 export const actions = {
-    addNewMessageActionCreator: (text: string) => ({
+    addNewMessage: (text: string) => ({
         type: 'ADD_NEW_MESSAGE',
         messageText: text
     } as const),
 };
 
-const dialogReducer = (state = initialState, action: ActionTypes): InitialStateType => {
+const dialogReducer = (state = initialState, action: ActionTypes): TDialogsInitialState => {
     switch(action.type) {
         case 'ADD_NEW_MESSAGE': {
             let message = {

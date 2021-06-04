@@ -21,8 +21,7 @@ let rootReducer = combineReducers({
 type TRootReducer = typeof rootReducer;
 export type TAppState = ReturnType<TRootReducer>
 
-type PropertiesTypes<T> = T extends { [key: string]: infer U } ? U : never;
-export type InferActionsType<T extends {[key: string]: (...args: any[]) => any}> = ReturnType<PropertiesTypes<T>>
+export type InferActionsType<T> = T extends { [key: string]: (...args: any[]) => infer U } ? U : never;
 
 export type CommonDispatch<A extends Action> = ThunkAction<Promise<void>, TAppState, unknown, A>;
 
@@ -31,6 +30,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(rootReducer, composeEnhancers(
     applyMiddleware(thunkMiddleware)
 ));
+
+export type ExtractString<T> = Extract<keyof T, string>;
 
 // @ts-ignore
 window.store = store;
