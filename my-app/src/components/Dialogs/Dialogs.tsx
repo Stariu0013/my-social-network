@@ -3,15 +3,25 @@ import s from './Dialogs.module.css'
 import DialogItem from "./DialogItem/DialogItem";
 import Message from "./Message/Message";
 import {Redirect} from "react-router-dom";
-import {Field, reduxForm} from "redux-form";
-import {Textarea} from "../common/FormControls/FormControls";
+import {InjectedFormProps, reduxForm} from "redux-form";
+import {createField, Textarea} from "../common/FormControls/FormControls";
 import {fieldMaxLength, requiredField} from "../../utils/validators/validator";
+import {TDialogsInitialState} from "../../redux/dialogs-reducer";
 
 const maxLength = fieldMaxLength(50);
 
-const Dialogs = props => {
+type TMapStateToProps = {
+    dialogData: TDialogsInitialState;
+    isAuth: boolean;
+}
 
-    const sendNewMessage = value => {
+type TDispatchToProps = {
+    addNewMessage: (message: string) => void;
+}
+
+const Dialogs: React.FC<TMapStateToProps & TDispatchToProps> = (props) => {
+
+    const sendNewMessage = (value: { addNewMessage: string }) => {
         props.addNewMessage(value.addNewMessage);
         value.addNewMessage = '';
     };
@@ -22,8 +32,6 @@ const Dialogs = props => {
     const dialogMessages = props.dialogData.messagesData
         .map( message => <Message message={message.message} />);
 
-
-    if(!props.isAuth) return <Redirect to={"/login"} />;
     return (
         <div>
             <div className={s.dialogs}>
@@ -41,11 +49,17 @@ const Dialogs = props => {
     )
 };
 
-const addNewMessageForm = props => {
+type TNewMessageNameKeys = {
+    addNewMessage: string;
+}
+
+type TFormDataKeys = Extract<keyof TNewMessageNameKeys, string>
+
+const addNewMessageForm: React.FC<InjectedFormProps<TNewMessageNameKeys>> = (props: any) => {
   return(
       <form onSubmit={props.handleSubmit}>
           <div>
-              <Field component={Textarea} validate={[requiredField, maxLength]} name="addNewMessage" placeholder="Enter message"/>
+              {createField<TFormDataKeys>("text", "addNewMessage", [requiredField, maxLength], "Enter message", Textarea)}
           </div>
           <div>
               <button>Send message</button>
@@ -54,6 +68,6 @@ const addNewMessageForm = props => {
   )
 };
 
-const AddNewReduxMessageForm = reduxForm({ form: 'addNewMessage'})(addNewMessageForm);
+const AddNewReduxMessageForm = reduxForm<TNewMessageNameKeys>({ form: 'addNewMessage'})(addNewMessageForm);
 
 export default Dialogs
