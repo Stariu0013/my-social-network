@@ -11,7 +11,7 @@ function generateNewUserId() {
     return idPrefix + ++counter;
 }
 
-type TPostData = {
+export type TPostData = {
     id: string,
     message: string,
     likesCount: number,
@@ -30,7 +30,7 @@ const initialState: {
     status: '',
 };
 export const actions = {
-    addNewPostActionCreator: (newPost: string) => ({
+    addNewPost: (newPost: string) => ({
         type: 'ADD_NEW_POST',
         newPost,
     } as const),
@@ -54,7 +54,7 @@ export const actions = {
 
 type TActions = InferActionsType<typeof actions>;
 type TInitialState = typeof initialState;
-type TDispatch = CommonDispatch<TActions | FormAction>;s
+type TDispatch = CommonDispatch<TActions | FormAction>;
 
 const profileReducer = (state = initialState, action: TActions): TInitialState => {
     switch (action.type) {

@@ -2,7 +2,13 @@ import React from 'react';
 import s from './../Dialogs.module.css'
 import {NavLink} from "react-router-dom";
 
-class DialogItem extends React.Component {
+type TDialogItemProps = {
+    id: string;
+    imgSrc: string;
+    name: string;
+}
+
+class DialogItem extends React.Component<TDialogItemProps> {
     path = "/dialogs/" + this.props.id;
 
     render = () => {
