@@ -1,21 +1,33 @@
 import React from 'react';
 import {Redirect} from "react-router-dom";
 import {connect} from "react-redux";
+import {TAppState} from "../redux/redux-store";
 
-const mapStateToPropsForRedirect = state => {
-    return {
-        isAuth: state.auth.isAuth
-    }
-};
+const mapStateToPropsForRedirect = (state: TAppState) => ({
+    isAuth: state.auth.isAuth,
+} as TWrappedComponentProps);
 
-export const withAuthRedirect = Component => {
-    class redirectComponent extends React.Component {
-        render() {
-            if(!this.props.isAuth) return <Redirect to='/login'/>
-            return <Component {...this.props}/>
+type TWrappedComponentProps = {
+    isAuth: boolean;
+}
+
+export function withAuthRedirect<T> (WrappedComponent: React.ComponentType<T>) {
+
+    const RedirectComponent: React.FC<TWrappedComponentProps & {}>= (props) => {
+        const { isAuth } = props;
+
+        if (!isAuth) {
+            console.log('unauthorized withAuthRedirect', props);
+            return <Redirect to='/login'/>;
         }
-    }
-    let connectedWithAuthRedirect = connect(mapStateToPropsForRedirect)(redirectComponent);
-    return connectedWithAuthRedirect;
-};
+
+        return <WrappedComponent {...props as any as T}/>;
+    };
+
+    let ConnectedWithAuthRedirect = connect<TWrappedComponentProps,
+        {}, T, TAppState>(mapStateToPropsForRedirect, {})
+    (RedirectComponent);
+
+    return ConnectedWithAuthRedirect;
+}
 
