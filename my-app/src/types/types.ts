@@ -1,4 +1,4 @@
-type TContacts = {
+export type TContacts = {
     github: string | null,
     vk: string | null,
     facebook: string | null,
