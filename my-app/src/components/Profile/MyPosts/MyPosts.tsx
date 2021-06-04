@@ -1,19 +1,31 @@
 import React from 'react';
 import Post from "./Post/Post";
 import s from './MyPosts.module.css'
-import {Field, reduxForm} from "redux-form";
+import {InjectedFormProps, reduxForm} from "redux-form";
 import {fieldMaxLength, requiredField} from "../../../utils/validators/validator";
-import {Textarea} from "../../common/FormControls/FormControls";
-
+import {createField, Textarea} from "../../common/FormControls/FormControls";
+import {TPostData} from "../../../redux/profile-reducer";
+import {ExtractString} from "../../../redux/redux-store";
 
 const maxLength = fieldMaxLength(15);
-const MyPosts = props => {
-    const addNewPost = value => {
+
+type TMyPosts = {
+    posts: Array<TPostData>;
+
+    addNewPost: (message: string) => void;
+}
+type TAddNewPostKeys = {
+    newPostField: string;
+}
+type TAddNewPostKeysExtracted = ExtractString<TAddNewPostKeys>;
+
+const MyPosts: React.FC<TMyPosts> = props => {
+    const addNewPost = (value: TAddNewPostKeys) => {
         props.addNewPost(value.newPostField);
         value.newPostField = '';
     };
 
-    let postsElem = props.posts
+    const postsElem = props.posts
         .map(post => <Post key={post.id} message={post.message} likeCount={post.likesCount}/>);
 
     return <div className={s.posts}>
@@ -26,10 +38,11 @@ const MyPosts = props => {
     </div>
 };
 
-const AddNewPostFrom = props => {
+const AddNewPostFrom: React.FC<InjectedFormProps<TAddNewPostKeys>> = props => {
+
     return(
         <form onSubmit={props.handleSubmit}>
-            <Field component={Textarea} name="newPostField" validate={[requiredField, maxLength]}/>
+            {createField<TAddNewPostKeysExtracted>("text", "newPostField", [requiredField, maxLength], "Post message", Textarea)}
             <div>
                 <button>
                     Add new post
@@ -39,6 +52,6 @@ const AddNewPostFrom = props => {
     )
 };
 
-const AddNewReduxPostFrom = reduxForm({form: "addNewPost"})(AddNewPostFrom);
+const AddNewReduxPostFrom = reduxForm<TAddNewPostKeys, {}>({form: "addNewPost"})(AddNewPostFrom);
 
 export default MyPosts;

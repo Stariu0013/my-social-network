@@ -1,7 +1,8 @@
 import {connect} from "react-redux";
 import Navbar from "./Navbar";
+import {TAppState} from "../../redux/redux-store";
 
-let mapStateToProps = state => {
+let mapStateToProps = (state: TAppState) => {
     return {
         friends: state.sidebar.friends,
     };

@@ -3,7 +3,17 @@ import s from './Navbar.module.css'
 import {NavLink} from "react-router-dom";
 import Sidebar from "./Sidebar/Sidebar";
 
-class Navbar extends React.Component {
+type TFriends = {
+    id: number;
+    name: string;
+    imgSrc: string;
+}
+
+type TNavbar = {
+    friends: TFriends[];
+}
+
+class Navbar extends React.Component<TNavbar> {
 
     friendList = this.props.friends.map(friend => <Sidebar name={friend.name} key={friend.id + "friend_key"} imgSrc={friend.imgSrc}/>)
 

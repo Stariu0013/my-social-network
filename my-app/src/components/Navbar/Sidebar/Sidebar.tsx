@@ -1,7 +1,12 @@
 import React from 'react';
 import s from './Sidebar.module.css'
 
-class Sidebar extends React.Component {
+type TSidebar = {
+    imgSrc: string;
+    name: string;
+}
+
+class Sidebar extends React.Component<TSidebar> {
 
     render = () => {
         return(

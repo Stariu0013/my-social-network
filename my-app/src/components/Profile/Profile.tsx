@@ -1,8 +1,19 @@
 import React from 'react';
 import ProfileInfo from "./ProfileInfo/ProfileInfo";
 import MyPostsContainer from "./MyPosts/MyPostsContainer";
+import { TProfile } from "../../types/types";
 
-class Profile extends React.Component {
+type TProfileProps = {
+    isOwner: boolean;
+    status: string;
+    profile: TProfile;
+
+    updateProfile : (profile: TProfile) => void;
+    updateStatus: (status: string) => void;
+    savePhoto: (photos: File) => void;
+}
+
+class Profile extends React.Component<TProfileProps> {
 
     render = () => {
         return (
@@ -15,8 +26,8 @@ class Profile extends React.Component {
                              updateStatus={this.props.updateStatus}/>
                 <MyPostsContainer />
             </div>
-        )
-    }
+        );
+    };
 }
 
 export default Profile;
