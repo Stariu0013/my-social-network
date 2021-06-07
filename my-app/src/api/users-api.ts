@@ -1,5 +1,6 @@
 import {TUser} from "../types/types";
 import {APIResponse, instance} from "./api";
+import {TFilter} from "../redux/users-reducer";
 
 type TGetUsers = {
     items: TUser[],
@@ -8,8 +9,8 @@ type TGetUsers = {
 }
 
 export const userAPI = {
-    getUsers(currentPage: number, pageSize: number) {
-        return instance.get<TGetUsers>(`users?page=${currentPage}&count=${pageSize}`)
+    getUsers(currentPage: number, pageSize: number, filter: TFilter) {
+        return instance.get<TGetUsers>(`users?page=${currentPage}&count=${pageSize}&term=${filter.term}` + (filter.friend === null ? '' : `&friend=${filter.friend}`))
             .then(response => response.data);
     },
     follow(id: number) {
