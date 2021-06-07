@@ -7,17 +7,17 @@ import News from "./components/News/News";
 import Settings from "./components/Settings/Settings";
 import NavbarContainer from "./components/Navbar/NavbarContainer";
 import HeaderContainer from "./components/Header/HeaderContainer";
-import Login from "./components/Login/Login";
-import UsersContainer from "./components/Users/UsersContainer";
+import { LoginPage } from "./components/Login/LoginPage";
+import { UsersPage } from "./components/Users/UsersPage";
 
-import {initializeApp} from "./redux/app-reducer";
+import { initializeApp } from "./redux/app-reducer";
 import Preloader from "./components/common/Preloader/Preloader";
-import {withSuspense} from "./hoc/withSuspense";
+import { withSuspense } from "./hoc/withSuspense";
 
-import store, {TAppState} from "./redux/redux-store";
+import store, { TAppState } from "./redux/redux-store";
 
-import {connect, Provider} from "react-redux";
-import {compose} from "redux";
+import { connect, Provider } from "react-redux";
+import { compose } from "redux";
 
 // Styles
 import './App.css';
@@ -55,8 +55,8 @@ class App extends React.Component<TAppProps> {
                         <Route exact path='/' render={() => <Redirect to='/profile' />} />
                         <Route path='/dialogs' render={() => <SuspendedDialogs />} />
                         <Route path='/profile/:userId?' render={() => <SuspendedProfile /> } />
-                        <Route path='/users' render={() => <UsersContainer /> } />
-                        <Route path='/login' render={() => <Login /> } />
+                        <Route path='/users' render={() => <UsersPage /> } />
+                        <Route path='/login' render={() => <LoginPage /> } />
                         <Route path='/news' component={News} />
                         <Route path='/music' component={Music} />
                         <Route path='/settings' component={Settings} />

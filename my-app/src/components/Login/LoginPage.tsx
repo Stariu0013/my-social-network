@@ -1,12 +1,12 @@
 import React from 'react';
-import {InjectedFormProps, reduxForm} from "redux-form";
-import {createField, Input} from "../common/FormControls/FormControls";
-import {requiredField} from "../../utils/validators/validator";
-import {connect} from "react-redux";
-import {login} from "../../redux/auth-reducer";
-import {Redirect} from "react-router-dom";
+import { InjectedFormProps, reduxForm } from "redux-form";
+import { createField, Input } from "../common/FormControls/FormControls";
+import { requiredField } from "../../utils/validators/validator";
+import { useDispatch, useSelector } from "react-redux";
+import { login} from "../../redux/auth-reducer";
+import { Redirect } from "react-router-dom";
 import style from './../common/FormControls/FormControls.module.css'
-import {TAppState} from "../../redux/redux-store";
+import { TAppState } from "../../redux/redux-store";
 
 type TLoginFormProps = {
     captchaUrl: string | null,
@@ -27,7 +27,7 @@ const LoginForm: React.FC<InjectedFormProps<TFormData, TLoginFormProps> &  TLogi
           {error && <div className={style.summuryError}>{error}</div>}
           <div><button>Log in</button></div>
       </form>
-  )
+  );
 };
 
 const LoginReduxForm = reduxForm<TFormData, TLoginFormProps>({
@@ -41,33 +41,23 @@ type TFormData = {
     captcha: string,
 }
 
-const Login: React.FC<TMapStateProps & TMapDispatchProps> = props => {
+export const LoginPage: React.FC = () => {
+    const isAuth = useSelector((state: TAppState) => state.auth.isAuth);
+    const captcha = useSelector((state: TAppState) => state.auth.captchaUrl);
+    const dispatch = useDispatch();
+
     const onSubmit = (formData: TFormData) => {
-        let { login, password, rememberMe, captcha} = formData;
-        props.login(login, password, rememberMe, captcha);
+        const { login: formLogin, password: formPassword, rememberMe: formRememberMe, captcha: formCaptcha} = formData;
+
+        dispatch(login(formLogin, formPassword, formRememberMe, formCaptcha));
     };
 
-    if(props.isAuth) {
+    if (isAuth) {
         return <Redirect to="/profile"/>
     }
 
     return <div>
         <h1>Login</h1>
-        <LoginReduxForm captchaUrl={props.captcha} onSubmit={onSubmit}/>
+        <LoginReduxForm captchaUrl={captcha} onSubmit={onSubmit}/>
     </div>
 };
-
-type TMapStateProps = {
-    captcha: string | null,
-    isAuth: boolean,
-}
-type TMapDispatchProps = {
-    login: (login: string, password: string, rememberMe: boolean, captcha: string) => void
-}
-
-const mapStateToProps = (state: TAppState): TMapStateProps => ({
-    captcha: state.auth.captchaUrl,
-    isAuth: state.auth.isAuth,
-});
-
-export default connect(mapStateToProps, {login})(Login);
