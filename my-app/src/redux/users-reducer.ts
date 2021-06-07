@@ -105,7 +105,7 @@ export const unfollow = (userId: number): TDispatch => {
     }
 };
 
-export const follow = (userId: any): TDispatch => {
+export const follow = (userId: number): TDispatch => {
     return async (dispatch) => {
         let apiMethod = userAPI.follow.bind(userAPI);
         await _followUnfollowFlow(dispatch, userId, apiMethod, actions.followSuccess);
