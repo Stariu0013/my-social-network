@@ -32,4 +32,4 @@ export const getFollowingInProgress = (state: TAppState) => {
 
 export const getFilter = (state: TAppState) => {
     return state.usersPage.filter;
-}
+};
