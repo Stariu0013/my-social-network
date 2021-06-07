@@ -29,3 +29,7 @@ export const getIsFetching = (state: TAppState) => {
 export const getFollowingInProgress = (state: TAppState) => {
     return state.usersPage.followingInProgress;
 };
+
+export const getFilter = (state: TAppState) => {
+    return state.usersPage.filter;
+}
