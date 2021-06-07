@@ -12,16 +12,25 @@ let initialState: {
     currentPage: number,
     isFetching: boolean,
     followingInProgress: number[],
+    filter: {
+        term: string,
+        friend: null | boolean,
+    }
 } = {
     users: [],
     pageSize: 5,
     usersTotalCount: 0,
     currentPage: 1,
     isFetching: false,
-    followingInProgress: []
+    followingInProgress: [],
+    filter: {
+        term: '',
+        friend: null,
+    },
 };
 
 type TInitialState = typeof initialState;
+export type TFilter = typeof initialState.filter;
 
 const usersReducer = (state = initialState, action: TActions): TInitialState => {
     switch (action.type) {
@@ -49,6 +58,12 @@ const usersReducer = (state = initialState, action: TActions): TInitialState => 
         case 'TOGGLE_IS_FETCHING': {
             return {...state, isFetching: action.isFetching}
         }
+        case 'SET_FILTER': {
+            return {
+                ...state,
+                filter: action.payload,
+            }
+        }
         case 'TOGGLE_FOLLOWING_PROGRESS': {
             return {
                 ...state,
@@ -68,6 +83,7 @@ export const actions = {
     followSuccess: (userId: number) => ({type: 'FOLLOW', userId} as const),
     unfollowSuccess: (userId: number) => ({type: 'UNFOLLOW', userId} as const),
     setUsers: (users: TUser[]) => ({type: 'SET_USERS', users} as const),
+    setFilter: (filter: TFilter) => ({type: 'SET_FILTER', payload: filter} as const),
     setCurrentPage: (currentPage: number) => ({type: 'SET_CURRENT_PAGE', currentPage} as const),
     setTotalUsersCount: (count: number) => ({type: 'SET_TOTAL_USERS_COUNT', count} as const),
     toggleIsFetching: (isFetching: boolean) => ({type: 'TOGGLE_IS_FETCHING', isFetching} as const),
@@ -76,12 +92,13 @@ export const actions = {
 
 type TDispatch = CommonDispatch<TActions>;
 
-export const requestUsers = (currentPage: number, pageSize: number): TDispatch => {
+export const requestUsers = (currentPage: number, pageSize: number, filter: TFilter): TDispatch => {
     return async (dispatch) => {
         dispatch(actions.toggleIsFetching(true));
         dispatch(actions.setCurrentPage(currentPage));
+        dispatch(actions.setFilter(filter))
 
-        let UsersData = await userAPI.getUsers(currentPage, pageSize);
+        let UsersData = await userAPI.getUsers(currentPage, pageSize, filter);
         dispatch(actions.toggleIsFetching(false));
         dispatch(actions.setUsers(UsersData.items));
         dispatch(actions.setTotalUsersCount(UsersData.totalCount > 100 ? UsersData.totalCount = 100 : UsersData.totalCount));
