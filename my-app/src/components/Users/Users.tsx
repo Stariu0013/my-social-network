@@ -13,6 +13,14 @@ import {
     getUsers,
     getUsersTotalCount,
 } from "../../selectors/user-selector";
+import {useHistory} from "react-router-dom";
+import * as queryString from "querystring";
+
+type QuerySearch = {
+    term?: string,
+    friend?: string,
+    page?: string,
+}
 
 const Users: React.FC = (props) => {
     const pageSize = useSelector(getPageSize);
@@ -22,10 +30,55 @@ const Users: React.FC = (props) => {
     const followingInProgress = useSelector(getFollowingInProgress);
     const filter = useSelector(getFilter);
     const dispatch = useDispatch();
+    const history = useHistory();
 
     useEffect(() => {
-        dispatch(requestUsers(currentPage, pageSize, filter));
+        const parsed = queryString.parse(history.location.search.substr(1));
+
+        const actualPage = parsed.page ? +parsed.page : currentPage;
+        let actualFilter = parsed.term ? { ...filter, term: parsed.term as string } : filter;
+
+        switch (parsed.friend) {
+            case 'null': {
+                actualFilter = { ...actualFilter, friend: null};
+
+                break;
+            }
+            case 'true': {
+                actualFilter = { ...actualFilter, friend: true};
+
+                break;
+            }
+            case 'false': {
+                actualFilter = { ...actualFilter, friend: false};
+
+                break;
+            }
+        }
+
+        dispatch(requestUsers(actualPage, pageSize, actualFilter));
     }, []);
+
+    useEffect(() => {
+        const query: QuerySearch = {};
+
+        if (filter.term) {
+            query.term = filter.term;
+        }
+
+        if (filter.friend) {
+            query.friend = String(filter.friend);
+        }
+
+        if (currentPage !== 1) {
+            query.page = String(currentPage);
+        }
+
+        history.push({
+            pathname: '/users',
+            search: queryString.stringify(query),
+        });
+    }, [filter, currentPage]);
 
     const followUser = (id: number) => {
         dispatch(follow(id));
