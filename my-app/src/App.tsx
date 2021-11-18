@@ -1,12 +1,7 @@
 
 import React from 'react';
-import {BrowserRouter, Redirect, Route, Switch, withRouter} from "react-router-dom";
+import {BrowserRouter, NavLink, Redirect, Route, withRouter} from "react-router-dom";
 
-import Music from "./components/Music/Music";
-import News from "./components/News/News";
-import Settings from "./components/Settings/Settings";
-import NavbarContainer from "./components/Navbar/NavbarContainer";
-import HeaderContainer from "./components/Header/HeaderContainer";
 import { LoginPage } from "./components/Login/LoginPage";
 import { UsersPage } from "./components/Users/UsersPage";
 
@@ -20,7 +15,13 @@ import { connect, Provider } from "react-redux";
 import { compose } from "redux";
 
 // Styles
-import './App.css';
+import 'antd/dist/antd.css';
+import {Layout, Menu, Breadcrumb} from 'antd';
+import { UserOutlined, NotificationOutlined } from '@ant-design/icons';
+import Header from "./components/Header/Header";
+
+const { SubMenu } = Menu;
+const { Content, Sider} = Layout;
 
 const ProfileContainer = React.lazy(() => import("./components/Profile/ProfileContainer"));
 const DialogsContainer = React.lazy(() => import("./components/Dialogs/DialogsContainer"));
@@ -45,25 +46,48 @@ class App extends React.Component<TAppProps> {
         }
 
         return (
-
-            <div className='app-wrapper'>
-                <HeaderContainer/>
-                <NavbarContainer />
-
-                <div className="app-wrapper-content">
-                    <Switch>
-                        <Route exact path='/' render={() => <Redirect to='/profile' />} />
-                        <Route path='/dialogs' render={() => <SuspendedDialogs />} />
-                        <Route path='/profile/:userId?' render={() => <SuspendedProfile /> } />
-                        <Route path='/users' render={() => <UsersPage /> } />
-                        <Route path='/login' render={() => <LoginPage /> } />
-                        <Route path='/news' component={News} />
-                        <Route path='/music' component={Music} />
-                        <Route path='/settings' component={Settings} />
-                    </Switch>
-                </div>
-
-            </div>
+            <Layout>
+                <Header />
+                <Layout>
+                    <Sider width={200} className="site-layout-background">
+                        <Menu
+                            mode="inline"
+                            defaultSelectedKeys={['1']}
+                            defaultOpenKeys={['sub1']}
+                            style={{ height: '100%', borderRight: 0 }}
+                        >
+                            <SubMenu key="sub1" icon={<UserOutlined />} title="Profile">
+                                <Menu.Item key="1"><NavLink to="/profile">Profile</NavLink></Menu.Item>
+                                <Menu.Item key="2"><NavLink to="/dialogs">Messages</NavLink></Menu.Item>
+                            </SubMenu>
+                            <SubMenu key="sub3" icon={<NotificationOutlined />} title="Developers">
+                                <Menu.Item key="3"><NavLink to="/users">Users</NavLink></Menu.Item>
+                            </SubMenu>
+                        </Menu>
+                    </Sider>
+                    <Layout style={{ padding: '0 24px 24px' }}>
+                        <Breadcrumb style={{ margin: '16px 0' }}>
+                            <Breadcrumb.Item>Home</Breadcrumb.Item>
+                            <Breadcrumb.Item>List</Breadcrumb.Item>
+                            <Breadcrumb.Item>App</Breadcrumb.Item>
+                        </Breadcrumb>
+                        <Content
+                            className="site-layout-background"
+                            style={{
+                                padding: 24,
+                                margin: 0,
+                                minHeight: 280,
+                            }}
+                        >
+                            <Route exact path='/' render={() => <Redirect to='/profile' />} />
+                            <Route path='/dialogs' render={() => <SuspendedDialogs />} />
+                            <Route path='/profile/:userId?' render={() => <SuspendedProfile /> } />
+                            <Route path='/users' render={() => <UsersPage /> } />
+                            <Route path='/login' render={() => <LoginPage /> } />
+                        </Content>
+                    </Layout>
+                </Layout>
+            </Layout>
         );
     };
 }
