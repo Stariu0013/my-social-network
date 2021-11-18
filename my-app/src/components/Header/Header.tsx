@@ -1,26 +1,49 @@
 import React from 'react';
-import s from './Header.module.css'
-import {NavLink} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {isUserAuthSelector, userLoginSelector} from "../../selectors/auth-selector";
+import {logout} from "../../redux/auth-reducer";
 
-type THeaderProps = {
-    isAuth: boolean;
-    login: string | null;
+import {Avatar, Button, Col, Menu, Row, Layout} from "antd";
+import {UserOutlined} from "@ant-design/icons";
 
-    auth: () => void;
-    logout: () => void;
+const { Header } = Layout;
+
+const AppHeader: React.FC = () => {
+    const dispatch = useDispatch();
+    const isAuth = useSelector(isUserAuthSelector);
+    const login = useSelector(userLoginSelector);
+
+    const logoutCb = () => {
+        dispatch(logout());
+    };
+
+    return (
+        <Header className="header">
+            <div className="logo"/>
+            <Row>
+                <Col span={18}>
+                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+                        <Menu.Item key="3"><NavLink to="/users">Users</NavLink></Menu.Item>
+                    </Menu>
+                </Col>
+                {
+                    isAuth
+                        ? <>
+                            <Col span={1}>
+                                <Avatar style={{backgroundColor: '#87d068'}} icon={<UserOutlined/>}/>
+                            </Col>
+                            <Col span={5}>
+                                <div>{login}<Button onClick={logoutCb}>Logout</Button></div>
+                            </Col>
+                        </>
+                        : <Col span={6}>
+                            <Link to='/login'>Login</Link>
+                        </Col>
+                }
+            </Row>
+        </Header>
+    );
 }
 
-const Header: React.FC<THeaderProps> = props => {
-        return (
-            <header className={s.header}>
-                <img src="https://is5-ssl.mzstatic.com/image/thumb/Purple124/v4/b6/c3/cb/b6c3cb54-5fd6-3d1f-7b13-255aa6e56b3e/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/1200x630wa.png" alt=""/>
-                <div className={s.loginBlock}>
-                    {props.isAuth
-                        ? <div>{props.login} - <button onClick={props.logout}>Logout</button></div>
-                        : <NavLink to='/login'>Login</NavLink>}
-                </div>
-            </header>
-        )
-}
-
-export default Header;
+export default AppHeader;
