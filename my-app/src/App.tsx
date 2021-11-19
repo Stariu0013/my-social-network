@@ -25,8 +25,10 @@ const { Content, Sider} = Layout;
 
 const ProfileContainer = React.lazy(() => import("./components/Profile/ProfileContainer"));
 const DialogsContainer = React.lazy(() => import("./components/Dialogs/DialogsContainer"));
+const ChatPage = React.lazy(() => import("./components/Chat/Chat"));
 const SuspendedProfile = withSuspense(ProfileContainer);
 const SuspendedDialogs = withSuspense(DialogsContainer);
+const SuspendedChat = withSuspense(ChatPage);
 
 type TAppProps = {
     initialized: boolean;
@@ -60,8 +62,11 @@ class App extends React.Component<TAppProps> {
                                 <Menu.Item key="1"><NavLink to="/profile">Profile</NavLink></Menu.Item>
                                 <Menu.Item key="2"><NavLink to="/dialogs">Messages</NavLink></Menu.Item>
                             </SubMenu>
-                            <SubMenu key="sub3" icon={<NotificationOutlined />} title="Developers">
+                            <SubMenu key="sub2" icon={<NotificationOutlined />} title="Developers">
                                 <Menu.Item key="3"><NavLink to="/users">Users</NavLink></Menu.Item>
+                            </SubMenu>
+                            <SubMenu key="sub3" icon={<NotificationOutlined />} title="Chat">
+                                <Menu.Item key="4"><NavLink to="/chat">Chat</NavLink></Menu.Item>
                             </SubMenu>
                         </Menu>
                     </Sider>
@@ -83,6 +88,7 @@ class App extends React.Component<TAppProps> {
                             <Route path='/dialogs' render={() => <SuspendedDialogs />} />
                             <Route path='/profile/:userId?' render={() => <SuspendedProfile /> } />
                             <Route path='/users' render={() => <UsersPage /> } />
+                            <Route path='/chat' render={() => <SuspendedChat /> } />
                             <Route path='/login' render={() => <LoginPage /> } />
                         </Content>
                     </Layout>
