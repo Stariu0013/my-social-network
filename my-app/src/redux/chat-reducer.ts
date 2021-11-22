@@ -1,38 +1,60 @@
-import {auth} from "./auth-reducer";
-import {InferActionsType} from "./redux-store";
+import {CommonDispatch, InferActionsType} from "./redux-store";
+import {Dispatch} from "redux";
+import {chatAPI, MessageCB, MessageT} from "../api/chat-api";
 
 let initialState: {
-    initialized: boolean;
+    messages: MessageT[];
 } = {
-    initialized: false
+    messages: [],
 };
 
 type TInitialState = typeof initialState;
 type ActionTypes = InferActionsType<typeof actions>;
+type TDispatch = CommonDispatch<InferActionsType<typeof actions>>;
 
-const appReducer = (state = initialState, action: ActionTypes): TInitialState => {
-    switch(action.type) {
-        case 'INITIALIZED_SUCCESSFULLY': {
+const chatReducer = (state = initialState, action: ActionTypes): TInitialState => {
+    switch (action.type) {
+        case 'MESSAGES_RECEIVED': {
             return {
                 ...state,
-                initialized: true
-            }
+                messages: [...state.messages, ...action.payload],
+            };
         }
         default:
             return state;
     }
 };
 
-const actions = {
-    initialized_successfully: () => ({
-        type: 'INITIALIZED_SUCCESSFULLY'
-    } as const),
-}
+let _newMessageHandler: MessageCB | null = null;
 
-export const initializeApp = () => (dispatch: any) => {
-    let promise = dispatch(auth());
-    promise.then(
-        dispatch(actions.initialized_successfully())
-    )
+const actions = {
+    messagesReceived: (messages: MessageT[]) => ({
+        type: 'MESSAGES_RECEIVED',
+        payload: messages,
+    } as const),
 };
-export default appReducer;
+
+const messageHandler = (dispatch: Dispatch) => {
+    if (_newMessageHandler === null) {
+        _newMessageHandler = (messages) => {
+            dispatch(actions.messagesReceived(messages));
+        };
+    }
+
+    return _newMessageHandler;
+};
+
+export const startMessageListening = (): TDispatch => async (dispatch) => {
+    chatAPI.startListening();
+    chatAPI.subscribe(messageHandler(dispatch));
+};
+
+export const stopMessageListening = (): TDispatch => async (dispatch) => {
+    chatAPI.stopListening();
+    chatAPI.unsubscribe(messageHandler(dispatch));
+};
+export const sendMessage = (message: string) => {
+    chatAPI.sendMessage(message);
+};
+
+export default chatReducer;
