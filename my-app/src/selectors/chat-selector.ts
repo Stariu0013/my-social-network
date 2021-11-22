@@ -1,8 +1,6 @@
 import {TAppState} from "../redux/redux-store";
 
-export const userLoginSelector = (state: TAppState) => {
-    return state.auth.login;
+export const getMessagesSelector = (state: TAppState) => {
+    return state.chat.messages;
 };
-export const isUserAuthSelector = (state: TAppState) => {
-    return state.auth.isAuth;
-};
+
