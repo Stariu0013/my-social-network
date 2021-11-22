@@ -1,74 +1,34 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {sendMessage, startMessageListening, stopMessageListening} from "../../redux/chat-reducer";
+import {getMessagesSelector} from "../../selectors/chat-selector";
 
 type WSMessage = {
     message: string;
     photo: string;
     userId: number;
     userName: string;
-}
-type WSComponent = {
-    wsChannel: WebSocket | null;
-}
+};
 
 const Chat: React.FC = () => {
-    const [wsChannel, setWSChannel] = useState<WebSocket | null>(null);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        let ws: WebSocket;
-
-        const closeHandler = () => {
-            console.error('WS DISCONNECTED. Trying to reconnect...');
-            setTimeout(createChannel, 3000);
-        };
-
-        const openHandle = () => {
-            console.warn('WS connected');
-        };
-
-        function createChannel() {
-            ws?.removeEventListener('close', closeHandler);
-            ws?.removeEventListener('open', openHandle);
-            ws?.close();
-
-            ws = new WebSocket('wss://social-network.samuraijs.com/handlers/ChatHandler.ashx');
-
-            ws.addEventListener('open', openHandle);
-            ws.addEventListener('close', closeHandler);
-
-            setWSChannel(ws);
-        }
-
-        createChannel();
+        dispatch(startMessageListening());
 
         return () => {
-            ws.removeEventListener('close', closeHandler);
-            ws.close();
-        };
+            dispatch(stopMessageListening());
+        }
     }, []);
 
     return <div>
-        <Messages wsChannel={wsChannel}/>
-        <AddNewMessageForm wsChannel={wsChannel}/>
+        <Messages />
+        <AddNewMessageForm />
     </div>;
 };
 
-const Messages: React.FC<WSComponent> = ({wsChannel: ws}) => {
-    const [messages, setMessages] = useState<WSMessage[]>([]);
-
-    const handleSendMessage = (event: any) => {
-        const newMessages = JSON.parse(event.data);
-
-        setMessages(prevState => [...prevState, ...newMessages]);
-    };
-
-    useEffect(() => {
-        ws?.addEventListener('message', handleSendMessage);
-
-        return () => {
-            ws?.removeEventListener('message', handleSendMessage);
-            ws?.close();
-        };
-    }, [ws]);
+const Messages: React.FC = () => {
+    const messages = useSelector(getMessagesSelector);
 
     return <div style={{height: "400px", overflowY: "auto"}}>
         {
@@ -79,7 +39,7 @@ const Messages: React.FC<WSComponent> = ({wsChannel: ws}) => {
 
 type MessageComponent = {
     message: WSMessage;
-}
+};
 
 const Message: React.FC<MessageComponent> = ({ message }) => {
     return <div key={message.userId}>
@@ -90,28 +50,15 @@ const Message: React.FC<MessageComponent> = ({ message }) => {
     </div>;
 };
 
-const AddNewMessageForm: React.FC<WSComponent> = ({wsChannel: ws}) => {
+const AddNewMessageForm: React.FC = () => {
     const [message, setMessage] = useState('');
-    const [readyState, setReadyState] = useState<'ready' | 'pending'>('pending');
 
-    const setReadyStateFn = () => {
-        setReadyState('ready');
-    };
-
-    useEffect(() => {
-        ws?.addEventListener('open',setReadyStateFn);
-
-        return () => {
-            ws?.removeEventListener('open',setReadyStateFn);
-        };
-    }, [ws]);
-
-    const sendMessage = () => {
+    const sendMessageHandler = () => {
         if (!message) {
             return;
         }
 
-        ws?.send(message);
+        sendMessage(message);
         setMessage('');
     };
     const onMessageChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -123,7 +70,7 @@ const AddNewMessageForm: React.FC<WSComponent> = ({wsChannel: ws}) => {
             <textarea onChange={onMessageChange} value={message}/>
         </div>
         <div>
-            <button disabled={readyState !== 'ready'} onClick={sendMessage}>Send message</button>
+            <button onClick={sendMessageHandler}>Send message</button>
         </div>
     </>;
 };
